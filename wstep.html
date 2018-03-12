@@ -1,0 +1,138 @@
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Description" content="Choć Jinja jest często kojarzony z generowaniem stron HTML, pozwala jednak na generowanie wszelkich dokumentów tekstowych np. LaTeX. Samo generowanie dokumentów w dużym uproszczeniu, można zobrazować jako pozostawienie co niezmienne, a modyfikowaniu co się zmienia w naszym dokumencie. To które części mają zostać zmienione, definiujemy przy pomocy języka szablonów. W niniejszym kilkuczęściowym artykule zostaną przedstawione wybrane elementy języka szablonów Jinja." />
+<meta name="Keywords" content="Jinja Jinja2 wstęp" />
+<title>DataHeaven</title>
+<link rel="Stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div id="top">
+	<div id="BODY">
+		<div id="LOGO"><!--LOGO-->DataHeaven<!--/LOGO--></div>
+		<div id="LINKI">
+		<!--LINKI-->
+			<ul>
+			</ul>
+		<!--/LINKI-->
+		</div>
+			<div id="MENU">
+			<!--MENU-->
+			<div class="MENU">
+				<div class="NAGLOWEK" id="MENU_NAGLOWEK"><!--NAGLOWEK MENU-->Menu<!--/NAGLOWEK MENU--></div>
+				<div class="ZAWARTOSC">
+				<!--ZAWARTOSC MENU-->
+					<ul>
+					<li><a href="jinjaspistresci.html">Jinja</a></li>
+					<li><a href="?">O stronie</a></li>
+					</ul>
+				<!--/ZAWARTOSC MENU-->
+				</div>
+			</div>
+			<!--/MENU-->
+	</div>
+	
+		<div id="TRESC">
+		<div class="ZAWARTOSC">
+		<!--TRESC-->
+		<h1>1. Wstęp
+        </h1>
+			
+
+<p>
+Choć Jinja jest często kojarzony z generowaniem stron HTML, pozwala jednak na generowanie wszelkich dokumentów tekstowych np. LaTeX. Samo generowanie dokumentów w dużym uproszczeniu, można zobrazować jako pozostawienie co niezmienne, a modyfikowaniu co się zmienia w naszym dokumencie. To które części mają zostać zmienione, definiujemy przy pomocy języka szablonów. W niniejszym kilkuczęściowym artykule zostaną przedstawione wybrane elementy języka szablonów Jinja.
+</p>
+
+<p>
+Do uruchamiania przykładów można skorzystać z dwóch metod. Pierwsza, w której szablon jest przypisany do zmiennej, druga ma szablon zapisany w pliku. 
+</p>
+
+<h2>1.1. Metoda 1</h2>
+<p>
+Uruchom poniższy skrypt (przykład na podstawie <a href="http://jinja.pocoo.org/docs/2.10/intro/#basic-api-usage">dokumentacji</a>).
+<pre><code>from jinja2 import Template             #1
+t = u"Witaj, {{ var }}!"          #2
+template = Template(t)            #3
+print template.render(var=u"świecie")   #4</code></pre>
+Wynik:
+<pre><code>Witaj, świecie!</code></pre>
+</p>
+<p>
+Krok po kroku:
+<ul>
+<li>Linia 1 - z biblioteki <i>jinja2</i> importujemy potrzebną klasę o nazwie <a href="http://jinja.pocoo.org/docs/2.10/api/#jinja2.Template"><code>Template</code></a>.</li>
+<li>Linia 2 - przypisz szablon do zmiennej. Podwójne nawiasy klamrowe zawierające zmienną <i>var</i>, <a href="http://jinja.pocoo.org/docs/dev/api/#notes-on-identifiers">zasady nadawania nazw zmiennym</a> są identyczne z regułami obowiązującymi w Pythonie.</li>
+<li>Linia 3 - utwórz obiekt klasy Template wraz z szablonem <code>'Witaj, {{ var }}!'</code>.</li> 
+<li>Linia 4 - wywołanie metody render. W miejsce znacznika <code>{{ var }}</code> będzie wstawiona wartość przekazana do metody render poprzez zmienną o nazwie, jaka została użyta w znaczniku.</li>
+</ul>
+</p>
+ 
+
+<h2>1.2. Metoda 2</h2>
+<p>
+Przejdźmy do ładowania szablonów zapisanych w plikach. Rozpatrzmy prosty przykład (na podstawie <a href="http://jinja.pocoo.org/docs/2.10/api/#basics">dokumentacji</a>). Mamy szablon zapisany w pliku <i>witaj.html</i> (nazwy plików z szablonami mogą mieć dowolne rozszerzenia).
+</p>
+<pre><code>{# To jest komentarz. #}
+Witaj, {{ var }}!</code></pre>
+<p> 
+Pierwsza linijka — jak łatwo się domyślić — jest to komentarz. Wstawiany wewnątrz <code>{# ... #}</code>, niezależnie czy będzie on w jednej linijce lub w kilku. Reszta raczej nie wymaga wyjaśnień.
+</p>
+<pre><code>from jinja2 import Environment, FileSystemLoader        #1
+env = Environment(loader=FileSystemLoader('templates'))       #2
+template = env.get_template('witaj.html')                #3
+print template.render(var=u"świecie")             #4</code></pre>
+
+Tym razem, kod wygląda następująco:
+<ul>
+<li>Linia 1 - importowanie modułów: <code>Environment</code> i <code>FileSystemLoader</code>. Pierwszy, który <a href="http://jinja.pocoo.org/docs/2.10/api/#jinja2.Environment">dokumentacja</a> określa jako główny komponent, zawierający konfiguracje oraz elementy środowiska, w którym przetwarzane są szablony. Kolejny, jest jednym z wielu <a href="http://jinja.pocoo.org/docs/2.10/api/#loaders">loaderów</a> odpowiedzialnych za ładowanie szablonów z podanej lokalizacji. <a href="http://jinja.pocoo.org/docs/2.10/api/#jinja2.FileSystemLoader"><code>FileSystemLoader</code></a> ładuje szablony z folderu (<code>FileSystemLoader('/ścieżka/do/folderu')</code>). </li>
+<li>Linia 2 - utworzenie instancji klasy <code>Environment</code> z wybranym loaderem.</li>
+<li>Linia 3 - obiekt <a href="http://jinja.pocoo.org/docs/2.10/api/#jinja2.Template"><code>Template</code></a> utwórzony tym razem przy pomocy <a href="http://jinja.pocoo.org/docs/2.10/api/#jinja2.Environment.get_template"><code>Environment</code></a>, wraz z szablonem z pliku <code>witaj.html</code> </li>
+<li>Linia 4 - wywołanie metody <a href="http://jinja.pocoo.org/docs/2.10/api/#jinja2.Template.render">render</a> i wypisanie wyniku. </li>
+</ul>
+
+<h2>1.3. Dodatkowe uwagi</h2>
+<p>
+ Przy większej ilości zmiennych przekazywanych do metody render, wygodniej jest użyć słownika. Gdzie klucze to nazwy zmiennych użytych w szablonie a wartości to, co chcemy przekazać do nich. Dodatkowo należy pamiętać. Wartości mają być typu tekstowego w Unicode (jako utf-8) lub ASCII oraz szablony ustalono, że będą kodowane w <a href="http://jinja.pocoo.org/docs/dev/api/#unicode">utf-8</a>.
+
+<pre><code>jakisSlownik = {'var' : u'świecie'}
+print template.render(jakisSlownik)</code></pre>
+</p>
+
+<p>
+W szablonach w celu dostępu do jakiegoś atrybutu lub elementu zmiennej można użyć dwóch równoważnych <a href="http://jinja.pocoo.org/docs/dev/templates/#variables">konwencji</a>. Pythonowej z nawiasami kwadratowymi (<code>nazwaZmiennej[...]</code>) jak do uzyskania dostępu do elementu (np. listy, krotki) lub z kropką (.) jak dla atrybutu (<code>nazwaZmiennej.nazwaAtrybutu</code>).
+</p>
+<pre><code>jakasKrotka = (u'świecie',)
+
+#z nawiasami kwadratowymi
+template = Template('Witaj, {{ var[0] }}!')
+print template.render(var=jakasKrotka)
+
+#z kropką
+template = Template('Witaj, {{ var.0 }}!')
+print template.render(var=jakasKrotka)</code></pre>
+<p>
+Jednakże istnieją pewne zasady z tym związane. W konwencji z nawiasami kwadratowymi w pierwszej kolejności zostanie podjęta próba dostępu do elementu. W przypadku jego braku szukany będzie atrybut. W konwencji z kropką jest odwrotnie, najpierw szukany jest atrybut następnie element. Trzeba na to uważać, szczególnie gdy zmienna ma element i argument o tej samej nazwie.
+</p>
+<pre><code>slownik = {'keys':123}
+#dir(slownik)
+#print slownik.__getitem__('keys')
+#print getattr(slownik, 'keys')
+template = Template(" {{ slownik['keys'] }}")
+print template.render(slownik=slownik)
+template = Template(" {{ slownik.keys }}")
+print template.render(slownik=slownik)</code></pre>
+
+
+
+		<!--/TRESC-->
+		</div>
+		</div>
+		
+<div id="STOPKA"><!--STOPKA-->&copy; dataheaven<!--/STOPKA--> Projekt strony na podstawie <a href="http://www.kurshtml.edu.pl">Kurs HTML</a>, dzięks! </div>
+	</div>
+</div>
+</body>
+</html>

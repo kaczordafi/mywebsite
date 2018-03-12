@@ -1,0 +1,158 @@
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Description" content="W tej części nauczysz się jak uzależnić wykonanie pewnych fragmentów szablonu od tego, czy warunek który określisz jest spełniony czy nie. Czyli będzie to dobrze znana instrukcja warunkowa. Sądzę, że ze względu na podobieństwo z Pythonowym odpowiednikiem ten temat będzie dla ciebie prosty i znajomy. Dlatego pominę omawianie wielu aspektów, między innymi słów kluczowych if,elif oraz else, które w porównaniu z Pythonowym odpowiednikiem ich znaczenie pozostaje bez zmian. Natomiast przedstawię ogólną postać i pewien ciekawy sposób użycia, a na zakończenie opisze operator trójargumentowy." />
+<meta name="Keywords" content="Jinja Jinja2 if" />
+<title>DataHeaven</title>
+<link rel="Stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div id="top">
+	<div id="BODY">
+		<div id="LOGO"><!--LOGO-->DataHeaven<!--/LOGO--></div>
+		<div id="LINKI">
+		<!--LINKI-->
+			<ul>
+			</ul>
+		<!--/LINKI-->
+		</div>
+			<div id="MENU">
+			<!--MENU-->
+			<div class="MENU">
+				<div class="NAGLOWEK" id="MENU_NAGLOWEK"><!--NAGLOWEK MENU-->Menu<!--/NAGLOWEK MENU--></div>
+				<div class="ZAWARTOSC">
+				<!--ZAWARTOSC MENU-->
+					<ul>
+					<li><a href="jinjaspistresci.html">Jinja</a></li>
+					<li><a href="?">O stronie</a></li>
+					</ul>
+				<!--/ZAWARTOSC MENU-->
+				</div>
+			</div>
+			<!--/MENU-->
+	</div>
+	
+		<div id="TRESC">
+		<div class="ZAWARTOSC">
+		<!--TRESC-->
+		<h1>3. Instrukcja warunkowa -  if...elif...else
+        </h1>
+			
+    <p> 
+W tej części nauczysz się jak uzależnić wykonanie pewnych fragmentów szablonu od tego, czy warunek który określisz jest spełniony czy nie. Czyli będzie to dobrze znana instrukcja warunkowa. Sądzę, że ze względu na podobieństwo z Pythonowym odpowiednikiem ten temat będzie dla ciebie prosty i znajomy. Dlatego pominę omawianie wielu aspektów, między innymi słów kluczowych if,elif oraz else, które w porównaniu z Pythonowym odpowiednikiem ich znaczenie pozostaje bez zmian. Natomiast przedstawię ogólną postać i pewien ciekawy sposób użycia, a na zakończenie opisze operator trójargumentowy.
+</p>
+
+
+<p>
+Podstawowa forma, rozpoczyna się znacznikiem <code><strong>{% if <i>warunek</i> %}</strong></code> i kończy 
+<code><strong>{% endif %}</strong></code>. Między tymi znacznikami umieszczamy szablon który ma zostać użyty jeśli warunek zostanie spełniony. Rozszerzanie funkcjonalności o <code><strong>elif</strong></code> (dopuszczalne użycie wielokrotne) i <code><strong>else</strong></code>, odbywa się poprzez wstawianie je pomiędzy te dwa znaczniki. Prześledźmy to na ogólnym przykładzie.
+</p>
+<p>Podstawowa postać:</p>
+<pre><code><strong>{% if <i>warunek</i> %} 
+    <i>blok_szablonu</i> 
+{% endif %}</strong></code></pre>
+
+<p>Rozszerzona o alternatywny szablon użyty gdy <code><strong><i>warunek</i></strong></code> nie jest spełniony:</p>
+<pre><code><strong>{% if <i>warunek</i>  %}
+   <i>blok_szablonu</i> 
+{% else %}
+    <i>alternatywny_szablon</i>
+{% endif %}
+</strong></code></pre>
+<p>Gdy chcemy sprawdzić więcej niż jeden warunek oraz jak poprzednio mieć alternatywę:</p>
+<pre><code><strong>{% if <i>warunek1</i>  %}
+    <i>blok_szablonu1</i>
+{% elif <i>warunek2</i>   %}
+    <i>blok_szablonu2</i>
+{% elif <i>warunek3</i>   %}
+    <i>blok_szablonu3</i>
+{% else %}
+    <i>alternatywny_blok</i> 
+{% endif %}
+</strong></code></pre>
+
+
+<p>
+Gdy za <code><strong><i>warunek</i></strong></code> wstawimy jedynie zmienną to blok szablonu zostanie użyty, gdy zmienna jest zdefiniowana, niepusta lub przyjmuje wartości <code>True</code>.
+Dodatkowo warto nadmienić, że w Jinja2 obsługiwane są typowe operatory logiczne znane z Pythona (np. ==, !=, &gt;, &lt;, and, or, not, in, is).
+</p>
+
+<p>
+Pomimo co wcześniej zostało powiedziane o umiejscowieniu znacznika <code><strong>extends</strong></code> na samym początku. Można posłużyć się pewnym pomysłowym sposobem, który szerzej opisany jest w <a href="http://jinja.pocoo.org/docs/2.10/tricks/#null-master-fallback">dokumentacji</a>. Wstawiamy taką o to wstawkę:
+<pre><code><strong>{% if <i>ma_rodzica</i> %}{% extends 'plik_rodzic' %}{% endif %}}</strong></code></pre>
+która w zależności od tego czy szablon wypełnia <code>plik_rodzic</code> (tj. <i>ma_rodzica = True</i>) lub nie (<i>ma_rodzica = False</i>), zostaje użyta metoda dziedziczenia.
+</p>
+
+<p>
+Jinja posiada też operator trójargumentowy: <code><strong><i>wyrażenie_gdy_prawda</i> if <i>warunek</i> else <i>wyrażenie_gdy_fałsz</i></strong></code> gdzie <code><strong>else</strong></code> jest opcjonalne. Przykładowo w zależności od potrzeby chcielibyśmy użyć jednej lub drugiej zmiennej możemy zrobić to następująco: 
+</p>
+<pre><code><strong>{{ var1 if <i>uzyj_var1</i> else uzyj_var2 }}</strong></code>. </pre>
+<p>
+Innym ciekawym przykładem zaczerpniętym z <a href="http://jinja.pocoo.org/docs/dev/templates/#if-expression">dokumentacji</a> jest kolejny trik na użycie znacznika <code><strong>extends</strong></code> (wskazane by znajdował się na samym początku).
+</p>
+<pre><code><strong>{% extends 'plik_rodzic1' if ma_rodzica1 else 'plik_rodzic2' %}</strong></code>.</pre>
+
+<p><b>Przykład 3.1.</b></p>
+<pre><code>template = env.get_template('if.txt')
+dane = {'minuty':5, 'godzina':u'rzynast', 'trzy_butelki':False}
+print template.render(dane)</code></pre>
+<p>plik: if.txt</p>
+<pre><code>{% if minuty == 10 %}
+Za 10 minut trzynasta
+Za 10 minut trzynasta
+Za 10 minut trzynasta
+{% elif minuty  in (1, 3, 5) %}
+Już za 5 minut trzynasta
+Już za 5 minut trzynasta
+Już za 5 minut trzynasta
+{% else %}
+Nie mam zegarka!!!
+{% endif %}
+
+{% if godzina %}
+T{{ godzina }}a wybiła, wstaje nowy dzień
+Ruszyła kolejka, wszystkim lżej
+Życie po t{{ godzina }}ej tu zaczyna się
+Poproszę trzy flaszki, {{ "trzy flaszki" if trzy_butelki else "nie pięć!" }}
+
+Shakin' Dudi Orchestra - "Za dziesięć minut trzynasta" (fragment)
+{% endif %}</code></pre>
+Wynik:
+<pre><code>Już za 5 minut trzynasta
+Już za 5 minut trzynasta
+Już za 5 minut trzynasta
+
+Trzynasta wybiła, wstaje nowy dzień
+Ruszyła kolejka, wszystkim lżej
+Życie po trzynastej tu zaczyna się
+Poproszę trzy flaszki, nie pięć!
+
+Shakin' Dudi Orchestra - "Za dziesięć minut trzynasta" (fragment)</code></pre>
+
+<h2>3.1. Podsumowanie.</h2>
+<p>
+ <ul>
+  <li> Pomiędzy <code><strong>{% if <i>warunek</i> %}</strong></code> a <code><strong>{% endif %}</strong></code> wstawiamy szablon do użycia, gdy <code><strong><i>warunek</i></strong></code> jest spełniony. Jeśli <code><strong><i>warunek</i></strong></code> jest jedynie zmienną to blok szablonu zostanie użyty gdy jest ona zdefiniowana, niepusta lub przyjmuje wartości True.</li>
+<li>
+<code><strong>{% elif <i>warunek_alternatywny</i> %}</strong></code> <code><strong>{% else %}</strong></code> funkcjonują tak jak w Pythonie.
+</li>
+  <li>Operator trójargumentowy: <code><strong>{{ <i>wyrażenie_gdy_prawda</i> if <i>warunek</i> else <i>wyrażenie_gdy_fałsz</i> }}</strong></code>, gdzie <code><strong>else</strong></code> jest opcjonalne.
+  </li>
+</ul> 
+</p>
+
+
+
+
+		<!--/TRESC-->
+		</div>
+		</div>
+		
+<div id="STOPKA"><!--STOPKA-->&copy; dataheaven<!--/STOPKA--> Projekt strony na podstawie <a href="http://www.kurshtml.edu.pl">Kurs HTML</a>, dzięks! </div>
+	</div>
+</div>
+</body>
+</html>

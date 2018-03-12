@@ -1,0 +1,150 @@
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Description" content="Definiowanie zmiennych oraz makr" />
+<meta name="Keywords" content="Jinja Jinja2 Definiowanie zmiennych makr" />
+<title>DataHeaven</title>
+<link rel="Stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div id="top">
+	<div id="BODY">
+		<div id="LOGO"><!--LOGO-->DataHeaven<!--/LOGO--></div>
+		<div id="LINKI">
+		<!--LINKI-->
+			<ul>
+			</ul>
+		<!--/LINKI-->
+		</div>
+			<div id="MENU">
+			<!--MENU-->
+			<div class="MENU">
+				<div class="NAGLOWEK" id="MENU_NAGLOWEK"><!--NAGLOWEK MENU-->Menu<!--/NAGLOWEK MENU--></div>
+				<div class="ZAWARTOSC">
+				<!--ZAWARTOSC MENU-->
+					<ul>
+					<li><a href="jinjaspistresci.html">Jinja</a></li>
+					<li><a href="?">O stronie</a></li>
+					</ul>
+				<!--/ZAWARTOSC MENU-->
+				</div>
+			</div>
+			<!--/MENU-->
+	</div>
+	
+		<div id="TRESC">
+		<div class="ZAWARTOSC">
+		<!--TRESC-->
+		<h1>5. Definiowanie zmiennych oraz makr
+        </h1>
+			
+      <h2>5.1. Definiowanie zmiennych</h2>
+
+      <p>
+        W części dotyczącej pętli zetknąłeś się z tagiem <i>set</i>. Zdefiniowaliśmy tam zmienną dla <i>loop</i> w pętlach zagnieżdżonych. Ogólnie <a href="http://jinja.pocoo.org/docs/dev/templates/#assignments">definiowanie zmiennych</a> można przedstawić następująco: <code><strong>{% set <i>zmienna</i> = <i>jakaśWartość</i> %}</strong></code>. Dopuszcza się definiowanie kilku zmiennych jednocześnie.
+      </p>
+
+<p><b>Przykład 5.1.1.</b></p>
+<pre><code>{% set piosenkarki = ['Miranda Lambert', 'KT Tunstall', 'Joss Stone', 'Pinnawela', 'Selah Sue', 'Colbie Caillat'] %}
+{% set x, y = range(5), range(2) %}</code></pre>
+
+
+<p>
+  Znacznik <code><strong>set</strong></code> umożliwia przypisanie <a href="http://jinja.pocoo.org/docs/dev/templates/#block-assignments">całego fragmentu</a> szablonu do zmiennej. Przez wstawienie go między <code><strong>{% set <i>zmienna</i> %}</strong></code> a <code><strong>{% endset %}</strong></code>, otrzymamy zmienną którą można wielokrotnie używać zamiast tego fragmentu.
+</p>
+
+<p><b>Przykład 5.1.2.</b></p>
+<pre><code>{% set petla %}
+    {% for liczba in range(5) %}
+        {{ liczba }} {{ loop.cycle('a', 'b', 'c') }} 
+    {% endfor %}
+{% endset %}</code></pre>
+
+<p>
+  Zmienne zdefiniowane wewnątrz bloku (np. w dziedziczeniu), makr i pętli mają zasięg ograniczony do ich wnętrza.
+</p>
+<h2>5.2. Makra</h2>
+<p>
+Dla łatwiejszego zrozumienia czym są <a href="http://jinja.pocoo.org/docs/dev/templates/#macros">makra</a> w Jinja, wyobraźmy sobie je jako funkcje przykładowo z Pythona. Tak i tutaj możemy tworzyć makra mające domyślne wartości argumentów oraz importować je z osobnego szablonu. Definiujemy używając znaczników <code><strong>{% macro <i>nazwa_makra</i>(<i>argument1</i>, <i>argument2</i>, ..., <i>argumentN</i>) %} ... {% endmacro %}</strong></code>, między które wstawiamy ciało makra. Podczas wywołania makra możemy przesłać więcej argumentów niż zdefiniowaliśmy, znajdą się wewnątrz zmiennych <i>varargs</i> oraz <i>kwargs</i>. Pierwszy tj. <i>varargs</i> zawiera listę argumentów pozycyjnych a <i>kwargs</i> ze słowami kluczowymi. Ich zasięg ogranicza się do wnętrza makra i nie mogą być użyte poza nim.
+</p>
+
+<p><b>Przykład 5.2.1.</b></p>
+<pre><code>{% macro wypisz( napis='hello' ) %}
+    napis: {{ napis }}
+    varargs : {{ varargs }}
+    kwargs : {{ kwargs }}
+{% endmacro %}
+
+{{ wypisz( 'Świecie', 'Jakiś napis', foo = 'Świecie') }}</code></pre>
+
+Wynik:
+<pre><code>napis: Świecie
+varargs : (u'Jaki\u015b napis',)
+kwargs : {'foo': u'\u015awiecie'}</code></pre>
+
+<h2>5.3. Importowamie zmiennych i makr</h2>
+
+<p>
+Zanim przejdziemy dalej krótka uwaga na temat nazw zmiennych w związku z importowaniem. Przy nadawaniu nazw zmiennym i makrom panuje zasada, iż nadanie nazwy zaczynającej się od jednego (lub wielu) znaku podkreślenia ( &#95; ) ogranicza ich zasięg do szablonu, w którym są zdefiniowane, czyli nie będą importowane.
+</p>
+<p>
+Do importu makr zapisanych w osobnym szablonie mamy do dyspozycji dwie metody podobne do Pythonowego <i>import ...</i> i <i>from ... import ...</i>. 
+</p>
+<p>
+Metoda będąca odpowiednikiem <i>import ...</i> polegająca na zaimportowaniu całego modułu i przypisaniu mu nazwy (<code><strong>{% import '<i>moduł</i>' as <i>nazwaModułu</i> %}</strong></code>). Odwoływanie się do atrybutów następuje przez nazwę importowanego modułu i nazwę atrybutu rozdzielonego znakiem kropki (<i>nazwaModułu.nazwaAtrybutu</i>). 
+</p>
+<p>
+Natomiast importowanie typu <i>from ... import ...</i> czyli osobno poszczególnych atrybutów odbywa się przy użyciu znacznika <code><strong>{% from '<i>moduł</i>' import <i>atrybut_1</i>, ..., <i>atrybut_N</i>  %}</strong></code>. Po tej operacji użycie zmiennych i makr odbywa się poprzez ich nazwy (<i>atrybut_i</i>).
+</p>
+<p><b>Przykład 5.3.1.</b></p>
+<p>
+  Przypuśćmy że w pliku <i>import.txt</i> zapisaliśmy nasze zmienne i makra z poprzednich przykładów.
+</p>
+<pre><code>{% import 'import.txt' as myimport %}  {# pierwszy sposób #}
+{{ myimport.piosenkarki }}
+{{ myimport.petla }}
+{{ myimport.wypisz( 'Świecie', 'Jakiś napis', foo = 'Świecie') }}
+
+{% from 'import.txt' import piosenkarki, petla, wypisz  %}  {# drugi sposób #}
+{{ piosenkarki }}
+{{ petla }}
+{{ wypisz( 'Świecie', 'Jakiś napis', foo = 'Świecie') }}</code></pre>
+
+<h2>5.4. Podsumowanie.</h2>
+<p>
+<ul>
+  <li>Przypisanie do zmiennej: <code><strong>{% set <i>zmienna</i> = <i>jakaśWartość</i> %}</strong></code>.
+  </li>
+  <li>Przypisanie bloku: <code><strong>{% set <i>zmienna</i> %} blok szablonu {% endset %}</strong></code></li>
+  <li>Tworzenie makra: <code><strong>{% macro <i>nazwa_makra</i>(<i>argument1</i>, <i>argument2</i>, ..., <i>argumentN</i>) %} <i>tu wstaw szablon</i> {% endmacro %}</strong></code></li>
+  <li>Gdy wywołaliśmy makro z większą ilością argumentów niż zdefiniowano: zmienne <i>varargs</i> oraz <i>kwargs</i>   dostępne jedynie wewnątrz makra   zawierają argumenty pozycyjne (<i>varargs</i>) oraz ze słowami kluczowymi (<i>kwargs</i>).
+  
+  </li>
+  <li>Nazwy zaczynające się od znaku (znaków) podkreślenia ( &#95; ) nie są importowane.</li>
+  <li><code><strong>{% import '<i>moduł</i>' as <i>nazwaModułu</i> %}</strong></code> &#x2014; importowanie całego modułu. Odwoływanie się do atrybutu przez <code><strong><i>nazwaModułu.nazwaAtrybutu</i></strong></code>.
+  </li>
+  <li><code><strong>{% from '<i>moduł</i>' import <i>atrybut_1</i>, ..., <i>atrybut_N</i>  %}</strong></code> &#x2014; importowanie poszczególnych atrybutów. Użycie zmiennych i makr odbywa się poprzez ich nazwy (<code><strong><i>atrybut_i</i></strong></code>).</li>
+</ul> 
+</p>
+
+
+
+
+
+
+
+
+    
+
+		<!--/TRESC-->
+		</div>
+		</div>
+		
+<div id="STOPKA"><!--STOPKA-->&copy; dataheaven<!--/STOPKA--> Projekt strony na podstawie <a href="http://www.kurshtml.edu.pl">Kurs HTML</a>, dzięks! </div>
+	</div>
+</div>
+</body>
+</html>

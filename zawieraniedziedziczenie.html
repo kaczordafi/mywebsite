@@ -1,0 +1,168 @@
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Description" content="Pisząc programy komputerowe zapewne korzystałeś z możliwości zapisywania fragmentów kodu w osobnym pliku. Tworząc taką bibliotekę, mogłeś używać zawartego w niej kodu wielokrotnie w przyszłych projektach. Podobną możliwość umieszczania fragmentów szablonu w osobnym pliku daje Jinja2. Poniżej opisane zostaną dwie metody ztym związane: zawieranie oraz dziedziczenie szablonów." />
+<meta name="Keywords" content="Jinja Jinja2 include, extends" />
+<title>DataHeaven</title>
+<link rel="Stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div id="top">
+	<div id="BODY">
+		<div id="LOGO"><!--LOGO-->DataHeaven<!--/LOGO--></div>
+		<div id="LINKI">
+		<!--LINKI-->
+			<ul>
+			</ul>
+		<!--/LINKI-->
+		</div>
+			<div id="MENU">
+			<!--MENU-->
+			<div class="MENU">
+				<div class="NAGLOWEK" id="MENU_NAGLOWEK"><!--NAGLOWEK MENU-->Menu<!--/NAGLOWEK MENU--></div>
+				<div class="ZAWARTOSC">
+				<!--ZAWARTOSC MENU-->
+					<ul>
+					<li><a href="jinjaspistresci.html">Jinja</a></li>
+					<li><a href="?">O stronie</a></li>
+					</ul>
+				<!--/ZAWARTOSC MENU-->
+				</div>
+			</div>
+			<!--/MENU-->
+	</div>
+	
+		<div id="TRESC">
+		<div class="ZAWARTOSC">
+		<!--TRESC-->
+		<h1>2. Zawieranie i dziedziczenie szablonów
+        </h1>
+			
+        <p>Pisząc programy komputerowe zapewne korzystałeś z możliwości zapisywania fragmentów kodu w osobnym pliku. Tworząc taką bibliotekę, mogłeś używać zawartego w niej kodu wielokrotnie w przyszłych projektach. Podobną możliwość umieszczania fragmentów szablonu w osobnym pliku daje Jinja2. Poniżej opisane zostaną dwie metody ztym związane: zawieranie oraz dziedziczenie szablonów.  
+        </p>
+
+        <h2>2.1. Zawieranie szablonów</h2>
+
+        <p>Dla zobrazowania metody zawierania szablonów, wyobraź sobie następującą sytuację. Po stworzeniu kilku szablonów zauważasz, że pewne fragmenty się często powtarzają. Dla wygody zamiast pisania za każdym razem, gdy zachodzi taka potrzeba, możesz je umieścić w osobnych plikach, a następnie w razie potrzeby wstawiać je w odpowiednie miejsca. Nawet proste wstawianie zawartości całego pliku do szablonu umożliwia tworzenie takich „bibliotek”, które ułatwiają pracę oraz są gotowe do wykorzystania w przyszłych projektach.
+        </p>
+
+        <p>Wstawianie w szablon zawartość pliku realizuje się przy pomocy znacznika <code><strong>{% include '<i>nazwaSzablonu</i>' ignore missing %}</strong></code>. Słowo kluczowe <code><strong>include</strong></code> nakazuje wstawienie zawartości szablonu <code><strong><i>'nazwaSzablonu'</i></strong></code>. Możliwe jest podanie listy kilku szablonów: <code><strong>{% include ['szablon1', 'szablon2', ..., 'szablonN'] ignore missing %}</strong></code> które będą sprawdzane po kolei aż do natrafienia na pierwszy istniejący, który zostanie użyty. Natomiast <code><strong>ignore missing</strong></code> (które jest opcjonalne) spowoduje  w przypadku braku szablonu  że nie pojawi się stosowny wyjątek.
+        </p>
+
+        <p><b>Przykład 2.1.1.</b>
+            <p>Dla zwiększenia przejrzystości, w obu przykładach tekst wstawiany z pliku będzie zawarty między znakami „*”.</p>
+<pre><code>template = env.get_template('base.txt')
+print template.render({'napis1' : u'babie lato' })</code></pre>
+<p>plik: includeMe.txt</p>
+<pre><code>*Nad mą głową {{ napis1 }}
+Łąki już w czerwieni maków*</code></pre>
+<p>plik: base.txt</p>
+<pre><code>To ten blask, co oślepia oczy moje
+To ten żar, co mnie zmienia w żywy ogień
+{% include 'ignoreMe.txt' ignore missing %}
+{% include 'includeMe.txt' %}
+
+I rumienię się
+{# Można sprawdzic po kolei szablony z listy 
+  i pierwszy który istnieje zostanie zawarty w szablonie base.txt
+{% include ['ignoreMe.txt', 'includeMe.txt', 'szablonx.html'] ignore missing %} 
+#}
+
+Ania Rusowicz - "To nie ja"</code></pre>
+Wynik:
+<pre><code>To ten blask, co oślepia oczy moje
+To ten żar, co mnie zmienia w żywy ogień
+*Nad mą głową babie lato
+Łąki już w czerwieni maków*
+I rumienię się
+
+Ania Rusowicz - "To nie ja"</code></pre>      
+        </p>
+<p>
+W przykładzie mamy dwa pliki: <code>includeMe.txt</code> i <code>base.txt</code>.
+Pierwszy z nich to szablon, który będziemy wstawiać do drugiego, oprócz krótkiego tekstu zawiera zmienną <code>napis1</code>. Całość zostanie wstawiona (podczas renderowania) do szablonu <code>base.txt</code>, zmienna <code>napis1</code> będzie zamieniona na odpowiednią wartość przekazaną do szablonu <code>base.txt</code>.
+W szablonie <code>base.txt</code>, pierwsze wywołanie <code><strong>include</strong></code>, ze względu na brak szablonu <code>ignoreMe.txt</code> oraz obecność opcji <code><strong>ignore missing</strong></code> zignorowane. Kolejne <code><strong>include</strong></code> zostanie obsłużone (pominięto <code><strong>ignore missing</strong></code>, gdyż wiemy na pewno, że plik istnieje). Ostatnie wywołanie <code>{% include ['ignoreMe.txt', 'includeMe.txt', 'szablonx.html'] ignore missing %}</code>, sprawdzi kolejno elementy listy <code>['ignoreMe.txt', 'includeMe.txt', 'szablonx.html']</code>, aż natrafi na pierwszy, który istnieje, czyli <code>includeMe.txt</code> i obsłuży go w identyczny sposób jak poprzednio, <code><strong>ignore missing</strong></code> zabezpiecza gdyby wszystkie pliki nie istniały.
+</p>
+
+<h2>2.2. Dziedziczenie szablonów</h2>
+
+<p>Dokumentacja podaje dobry <a href="http://jinja.pocoo.org/docs/dev/templates/#template-inheritance">przykład</a> użycia dziedziczenia szablonów, który w zmienionej formie posłuży nam do zobrazowania tej metody.
+</p>
+<p>
+Przypuśćmy, że budujemy stronę internetową. Wiele jej podstron będzie zawierać wspólne elementy takie jak część nagłówka, stopka, logo i menu. Możemy zdefiniować to wszystko w jednym szablonie wraz z definicjami bloków a następnie wypełniać bloki przy pomocy innych szablonów. Taki szablon, na potrzeby tego artykułu, nazwiemy <i>rodzic</i>, natomiast przez <i>dziecko</i> określimy szablon, który wypełnia miejsca na to przeznaczone.
+</p> 
+
+<p>Znaczniki użyte w poniższym przykładzie, możemy przedstawić ogólnie w następującej postaci: <code><strong>{% extends "nazwaSzablonuRodzica" %}</strong></code>, <code><strong>{% block nazwaBloku %}<i>treść</i>{% endblock %}</strong></code> oraz <code><strong>{{ self.nazwaBloku() }}</strong></code> i <code><strong>{{ super() }}</strong></code>. 
+</p>
+<p>Pierwszy znacznik umieszczany na samym początku szablonu <i>dziecko</i> i wskazuje na <i>rodzica</i>. Ważne jest by znajdował się on na samym początku co również dotyczy znaku spacji. W przeciwnym przypadku zawartość przed znacznikiem zostałaby potraktowana jak zwykły szablon, co potecjalnie może doprowadzić do wystąpienia błędów.
+</p>
+<p>Znacznik <code><strong>{% block nazwaBloku %}<i>treść</i>{% endblock %}</strong></code> z tą samą nazwą <code><strong>nazwaBloku</strong></code> umieszczamy zarówno szablonie <i>dziecko</i> jaki<i>rodzic</i>. Jego funkcja jest ściśle związana z miejscem wystąpienia. W szablonie <i>dziecko</i> definiuje treści przekazywane do <i>rodzica</i>.
+Natomiast w <i>rodzicu</i> wskazuje miejsce do wypełnienia oraz opcjonalnie <code><strong><i>treść</i></strong></code>, która będzie użyta, jeśli <i>dziecko</i> nie będzie zawierać stosownej definicji.
+Natomiast by jednak użyć domyślną treść z szablonu <i>rodzic</i> należy użyć znacznika <code><strong>{{ super() }}</strong></code>, wstawionego w definicję bloku szablonu <i>dziecko</i>.  
+</p>
+<p>Nazwy bloków w tym samym szablonie nie mogą się powtarzać. Do powtórzenia bloków w szablonie <i>rodzic</i> stosujemy znacznik <code><strong>{{ self.nazwaBloku() }}</strong></code>.
+</p>
+
+<p><b>Przykład 2.2.1.</b></p>
+
+<pre><code>template = env.get_template('dziecko.txt')
+print template.render()</code></pre>
+
+<p>plik: rodzic.txt</p>
+<pre><code>Los odmienił czas, czas zawrócił bieg
+{% block napis1 %}Rzucił ślepy traf, na krańce świata hen{% endblock %}
+{% block napis2 %}Ja czekam Ciebie tam, tam odnajdziesz mnie{% endblock %}
+
+{% block napis3 %}{% endblock %}.
+{{ self.napis3() }}
+
+Ania Rusowicz - "Ja i Ty"</code></pre>
+<p>plik: dziecko.txt</p>
+<pre><code>{% extends "rodzic.txt" %}
+{% block napis1 %}
+*Dziś już nie ma nas – gdzie jesteś, gdzie*
+{{ super() }}
+{% endblock %}
+{% block napis3 %}*Ja i Ty i ten świat
+Dziś daje nam, jedną z szans* {% endblock %}</code></pre>
+Wynik:
+<pre><code>Los odmienił czas, czas zawrócił bieg
+*Dziś już nie ma nas – gdzie jesteś, gdzie*
+Rzucił ślepy traf, na krańce świata hen
+Ja czekam Ciebie tam, tam odnajdziesz mnie
+*Ja i Ty i ten świat
+Dziś daje nam, jedną z szans* .
+*Ja i Ty i ten świat
+Dziś daje nam, jedną z szans* 
+
+Ania Rusowicz - "Ja i Ty"</code></pre>
+
+<!-- summary -->
+<h2>2.3. Podsumowanie</h2>
+<p>
+ <ul>
+  <li><code><strong>{% include 'nazwaSzablonu' ignore missing %}</strong></code> 
+  wstawia zawartość z <code><strong>'nazwaSzablonu'</strong></code> w miejsce wystąpienia znacznika, <code><strong>ignore missing</strong></code> czyli nie wywołuj wyjątku braku szablonu.</li>
+  <li><code><strong>{% extends "nazwaSzablonuRodzica" %}</strong></code> wstawiany na początku, informuje który szablon będzie wypełniany.</li>
+  <li><code><strong>{% block nazwaBloku %}treść{% endblock %}</strong></code> definicja bloku, w szablonie rodzic <code><strong>treść</strong></code> będzie wartością domyślną zastępowaną przez definicje bloku o tej samej nazwie w szablonie <i>dziecko</i>. Jeżeli takiej definicji nie będzie to zostanie użyta wartość domyślna.</li>
+  <li><code><strong>{{ self.nazwaBloku() }}</strong></code> powtarza zawartości z bloku <code><strong>nazwaBloku</strong></code>. </li>
+  <li><code><strong>{{ super() }}</strong></code>
+  wstawia domyślną treść bloku. </li>
+</ul> 
+</p>
+
+
+    
+
+		<!--/TRESC-->
+		</div>
+		</div>
+		
+<div id="STOPKA"><!--STOPKA-->&copy; dataheaven<!--/STOPKA--> Projekt strony na podstawie <a href="http://www.kurshtml.edu.pl">Kurs HTML</a>, dzięks! </div>
+	</div>
+</div>
+</body>
+</html>

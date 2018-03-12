@@ -1,0 +1,227 @@
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Description" content="Pętla for w Jinja przypomina jej Pythonowy odpowiednik. Także posiada wskazanie sekwencji, po której zmienna ma kolejno przechodzić i jest dostępna wewnątrz bloku szablonu. Jednakże zamiast charakterystycznych wcięć wskazujących na kod należący do pętli szablon umieszcza się go między parę znaczników ..." />
+<meta name="Keywords" content="Jinja Jinja2 pętla for" />
+<title>DataHeaven</title>
+<link rel="Stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div id="top">
+	<div id="BODY">
+		<div id="LOGO"><!--LOGO-->DataHeaven<!--/LOGO--></div>
+		<div id="LINKI">
+		<!--LINKI-->
+			<ul>
+			</ul>
+		<!--/LINKI-->
+		</div>
+			<div id="MENU">
+			<!--MENU-->
+			<div class="MENU">
+				<div class="NAGLOWEK" id="MENU_NAGLOWEK"><!--NAGLOWEK MENU-->Menu<!--/NAGLOWEK MENU--></div>
+				<div class="ZAWARTOSC">
+				<!--ZAWARTOSC MENU-->
+					<ul>
+					<li><a href="jinjaspistresci.html">Jinja</a></li>
+					<li><a href="?">O stronie</a></li>
+					</ul>
+				<!--/ZAWARTOSC MENU-->
+				</div>
+			</div>
+			<!--/MENU-->
+	</div>
+	
+		<div id="TRESC">
+		<div class="ZAWARTOSC">
+		<!--TRESC-->
+		<h1>4. Pętla For
+        </h1>
+			
+      <p>
+        Pętla <a href="http://jinja.pocoo.org/docs/2.10/templates/#for"><i>for</i> w Jinja</a>  przypomina jej <a href="https://docs.python.org/2/tutorial/controlflow.html#for-statements">Pythonowy odpowiednik</a>. Także posiada wskazanie sekwencji, po której elementach ma kolejno przechodzić (<code>for <i>element</i> in <i>sekwencja</i></code>) a zmienna <i>element</i> jest dostępna wewnątrz bloku szablonu. Jednakże zamiast charakterystycznych wcięć wskazujących na kod należący do pętli szablon umieszcza się go między parę znaczników <code><strong>{% for <i>element</i> in <i>sekwencja</i> %}</strong></code> a <code><strong>{% endfor %}</strong></code>. I jak się przekonamy dalej różnic jest więcej.
+      </p>
+<p><b>Przykład 4.1.</b></p>
+<pre><code>{% for item in piosenkarki  %}
+    {{ item }}
+{% endfor %}</code></pre>
+<p>
+Przekazanie do szablonu listy <code>piosenkarki = ['Miranda Lambert', 'KT Tunstall', 'Joss Stone', 'Pinnawela', 'Selah Sue', 'Colbie Caillat']</code>, da wynik w postaci wypisanych kolejno jej elementów.
+</p>
+
+<p>
+W Pythonie często z pętlą używana jest funkcja <i>range</i>. Generująca sekwencje liczb całkowitych po której pętla iteruje. Mamy ją i w <a href="http://jinja.pocoo.org/docs/dev/templates/#range">Jinja</a>. Przypomnę że jej argumentami są liczby całkowite, określające kolejno: od jakiej liczby ma zacząć generować, ilość i różnice między kolejnymi liczbami (<code><strong>range(<i>początek</i>, <i>ile</i>, <i>różnica</i>)</strong></code>).
+<code><strong><i>początek</i></strong></code> i <code><strong><i>różnica</i></strong></code> są opcjonalne, ich domyślna wartość to 0 oraz 1.
+</p>
+<p>
+  Samo wykonanie bloku ustaloną ilość razy to za mało. Co jeżeli chcemy wyjść z pętli przed zakończeniem lub nie wykonać część bloku? A gdyby tak uwarunkować wykonanie iteracji? Co gdy chcemy jakieś reakcji kiedy pętla się nie wykona? I wszystko to zrobić w elegancki sposób. Odpowiedzią na te kwestie są: znaczki <i>break</i> i <i>continue</i>, warunek <i>if</i> oraz klauzula <i>else</i>.
+</p>
+<p>
+   Znaczniki <a href="http://jinja.pocoo.org/docs/dev/templates/#loop-controls"><code>{% break %}</code> oraz <code>{% continue %}</code></a> funkcjonują identycznie jak ich <a href="https://docs.python.org/2/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops">Pythonowe odpowiedniki</a>.
+Przypomnę, że <i>{% break %}</i> powoduje wyjście z pętli a <i>{% continue %}</i> przejście do kolejnej iteracji. Jednakże przeciwnie do Pythona, standardowo są niedostępne. Musimy podczas tworzenia środowiska przesłać do parametru <a href="http://jinja.pocoo.org/docs/dev/extensions/#adding-extensions"><i>extensions</i></a> listę zawierającą rozszerzenie <a href="http://jinja.pocoo.org/docs/dev/extensions/#loop-controls"><i>jinja2.ext.loopcontrols</i></a> (<code><strong>extensions=['jinja2.ext.loopcontrols']</strong></code>). W naszym przypadku tworzenie środowiska z rozszerzeniem przedstawia się następująco (patrz <a href="wstep.html">wstęp</a>): 
+<pre><code>env = Environment(loader=FileSystemLoader('templates'), extensions=['jinja2.ext.loopcontrols'])</code></pre>
+</p>
+<p><b>Przykład 4.2.</b></p>
+<pre><code>{# break #}
+{% for i in range(5) %}
+    {{ i }}
+    {% if i == 3 %}{% break %}{% endif %} {# policz do trzech i opuść pętlę #}
+{% endfor %}
+</code>
+<code>
+{# continue #}
+{% for i in range(6) %}
+    {% if i%2 == 0 %}{% continue %}{% endif %}  {# wypisz tylko nieparzyste #}
+    {{ i }}
+{% endfor %}</code></pre>
+
+<p>
+  Zwróćmy uwagę na pewien fakt: pętla podczas iteracji przechodzi po wszystkich elementach sekwencji. A jeśli chcielibyśmy wykonać bloku szablonu tylko dla wybranych elementów? Należałoby je jakoś filtrować. Przykładowo, przez umieszczenie bloku szablonu wewnątrz instrukcji <i>if</i>, określającej które z elementów sekwencji są istotne. Jednakże istnieje bardziej „elegancki” sposób robiący dokładnie to samo, a mianowicie <a href="http://jinja.pocoo.org/docs/dev/templates/#for"> warunek <i>if</i> umieszczony wewnątrz znacznika</a> rozpoczynającego pętlę.
+</p>
+<pre><code>{# przechodzi przez wszystkie elementy #}
+{% for <i>item</i> in <i>seq</i> %}
+  {# blok szablonu #}
+{% endfor %}
+   
+{# blok wykonywany dla wybranych elementów #}
+{% for <i>var</i> in <i>seq</i> %}
+  {% if <i>warunek(var)</i> %}
+    {# wykonaj gdy <i>warunek(var)</i> spełniony #}
+  {% endif %}
+{% endfor %}
+   
+{# bardzie "elegancko" #}
+{% for <i>var</i> in <i>seq</i> if <i>warunek(var)</i> %}
+  {# wykonaj gdy <i>warunek(var)</i> spełniony #}
+{% endfor %}</code></pre>
+
+<p><b>Przykład 4.3.</b></p>
+<pre><code>{% for item in range(10) if item%2 != 0  %} {# odfiltruje liczby parzyste #}
+    {{ item }}
+{% endfor %}</code></pre>
+
+
+<p>
+  W Pythonie klauzula <i>else</i> dołączona do pętli wykona się gdy pętla bez przerwania przejdzie cały swój przebieg (patrz:<a href="https://docs.python.org/2/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops">tutaj</a> oraz <a href="https://shahriar.svbtle.com/pythons-else-clause-in-loops">tutaj</a>). Inaczej jest w Jinja. Zdecydowano, że blok szablonu zawarty w <i>else</i> zostanie użyty gdy nie zajdzie żadna iteracja. Powodem może być pusta sekwencja do iteracji lub warunek <i>if</i> uniemożliwi wykonanie. Daje to możliwość wstawienia alternatywnego bloku szablonu, na wypadek braku iteracji. Ogólnie klauzulę można przedstawić następująco:
+</p>
+<pre><code>{% for <i>item</i> in <i>seq</i> %}
+    Główny blok szablonu.
+{% else %}
+    Alternatywny blok.
+{% endfor %}</code></pre>
+
+<p><b>Przykład 4.4.</b></p>
+<pre><code>{% for item in pustalista %}
+    {{ item }}
+{% else %}
+    Nie ma co iterować.
+{% endfor %}</code></pre>
+<p>
+  Dodatkiem do pętli jest zestaw zmiennych pomocniczych. Dotyczą: licznika iteracji, elementów sekwencji które pętla przechodzi, różnych aspektów działania oraz dodatkowej funkcji-pętli. Opiszę skrótowo wybrane wraz z przykładami, pełną listę z opisem można znaleźć w <a href="http://jinja.pocoo.org/docs/dev/templates/#for">dokumentacji</a>. Należy zapamiętać że ich zasięg ogranicza się do wnętrza pętli, w której się znajdują. Co stanowi problem w przypadku swobodnego ich użycia w pętlach zagnieżdżonych. Opis tego problemu i rozwiązanie zostanie omówione w dalszej części. 
+</p>
+
+<p>
+   Liczba przebytych iteracji przypisana jest do  <i>loop.index</i> natomiast pozostałych do końca znajdziemy w <i>loop.revindex</i>. Zmienne <i>loop.first</i> i <i>loop.last</i> przyjmują wartość <code><strong>True</strong></code> w zależności czy pętla jest na początku swojego przebiegu (<i>loop.first=</i><code>True</code>) czy na końcu (<i>loop.last=True</i>).
+</p>
+<p><b>Przykład 4.5.</b></p>
+<pre><code>{% for liczba in range(5) %}
+{% if loop.first %}Start{% endif %}
+loop.index = {{ loop.index }} | loop.revindex = {{ loop.revindex }}
+{% if loop.last %}Stop{% endif %}
+{% endfor %}</code></pre>
+
+<p>
+  Na koniec mamy <i>loop.cycle</i>, choć jest funkcją też należy do tego zestawu. Iteruje po przekazanych do niej elementach, równolegle z pętlą w której się znajduje.
+</p>
+<p><b>Przykład 4.6.</b></p>
+<pre><code> {% for liczba in range(5) %}
+    {{ liczba }} {{ loop.cycle('a', 'b', 'c') }} 
+{% endfor %}</code></pre>
+Wynik:
+<pre><code>0 a    1 b    2 c    3 a     4 b</code></pre>
+
+
+<p>
+Przejdźmy do wcześniej wspomnianego problemu użycia <i>loop</i> w pętlach zagnieżdżonych. Omówimy go i podamy rozwiązanie, posiłkując się przykładem. Na razie przyjrzyjmy się poniższemu szablonowi, pamiętając że zasięg <i>loop</i> ograniczony jest do wnętrza pętli najbardziej przyległej do niej.
+</p>
+<p><b>Przykład 4.7.</b></p>
+<pre><code>{% for i in range(5) %} {# pętla zewnętrzna #}
+    {% for j in range(5)  %} {# pętla wewnętrzna #}
+       {{ loop.index }}
+    {% endfor %}
+{% endfor %}</code></pre>
+<p>
+Jak łatwo się <code>{{ loop.index }}</code> będzie wyświetlał liczbę przebytych iteracji pętli wewnętrznej i nie będzie miał dostępu do ilości przebiegów pętli zewnętrznej. A chcielibyśmy w tym miejscu uzyskać analogiczny rezultat tylko że dla pętli zewnętrznej. Rozwiązaniem tego problemu jest przypisanie <i>loop</i> przy pomocy tagu <a href="http://jinja.pocoo.org/docs/dev/templates/#assignments"><i>set</i></a> do zmiennej jeszcze przed pętlą wewnętrzną <a href="http://jinja.pocoo.org/docs/dev/tricks/#accessing-the-parent-loop">(<code>{% set uploop = loop %}</code>)</a>. Dzięki czemu w naszym przykładzie dostęp do licznika pętli zewnętrznej uzyskujemy przez <code>uploop.index</code>.
+</p>
+<p><b>Przykład 4.8.</b></p>
+<pre><code>{% for i in range(5) %} {# pętla zewnętrzna #}
+    {% set uploop = loop %} {# przypisanie do zmiennej #}
+    {% for j in range(5)  %} {# pętla wewnętrzna #}
+       {{ uploop.index }}    {# licznik pętli zewnętrznej #}
+    {% endfor %}
+{% endfor %}</code></pre>
+
+<p>
+Ostatnim tematem który zostanie poruszony w tej części jest obiekt <a href="http://jinja.pocoo.org/docs/dev/templates/#cycler"><i>cycler</i></a>. Jego użycie jest proste. Przy pomocy <code>set</code> tworzymy instancję jego klasy i jako argumenty podajemy elementy po których ma iterować. Aktualny element sekwencji znajduje się w <code>current</code>. Aby przejść do następnej iteracji i wyświetlić związany z nią element wywołujemy metodę <code>next()</code>. Powrót do początku przebiegu uzyskujemy wywołując <code>reset()</code>.
+</p>
+<p><b>Przykład 4.9.</b></p>
+<pre><code>{% set cykl_literki = cycler( 'a', 'b', 'c', 'd') %}
+{{ cykl_literki.next() }}
+{{ cykl_literki.next() }}
+{{ cykl_literki.next() }}
+
+{# pokaż aktualny element  #}
+{{ cykl_literki.current }}
+
+{# powrót do pierwszego elementu #}
+{# i nic nie wyświetlaj #} 
+{% do cykl_literki.reset() %}         
+
+{# w pętli #}
+{% for j in range(4) %}
+   {{ j }} : {{ cykl_literki.next() }}
+{% endfor %}</code></pre>
+<p>
+  W przykładzie powyżej użyto znacznika <a href="http://jinja.pocoo.org/docs/dev/templates/#expression-statement"><code><strong>do</strong></code></a>. Pozwala on na wykonanie jakiegoś wyrażenia (w przykładzie: <code>cykl_literki.reset()</code>) bez wyświetlania czegokolwiek. Wymagane jest dodanie do środowiska rozszerzenia <a href="http://jinja.pocoo.org/docs/dev/extensions/#expression-statement"><i>jinja2.ext.do</i></a> (patrz akapit dotyczący <code>{% break %}</code> oraz <code>{% continue %}</code> ).
+</p>
+
+<h2>4.1. Podsumowanie.</h2>
+<p>
+ <ul>
+  <li>Znaczki <code><strong>{% for <i>element</i> in <i>sekwencja</i> %}</strong></code> oraz <code><strong>{% endfor %}</strong></code> definiują pętle. Pomiędzy nie wstawiamy blok szablonu. Jako <code><strong><i>sekwencja</i></strong></code> można użyć funkcji <i>range</i>.
+  </li>
+
+  <li>
+    By użyć <code><strong><i>{% break %}</i></strong></code> (wyjście z pętli) i <code><strong><i>{% continue %}</i></strong></code> (przejście do kolejnej iteracji), trzeba utworzyć środowisko z rozszerzeniem <i>jinja2.ext.loopcontrols</i> (np. <code><strong>env = Environment(loader=FileSystemLoader('<i>templatesFiles</i>'), extensions=['jinja2.ext.loopcontrols'])</strong></code>).
+  </li>
+
+  <li>
+  <code><strong>{% for <i>var</i> in <i>seq</i> if <i>warunek</i> %}</strong></code> daje warunkowe wykonanie iteracji.
+  </li>
+  
+  <li>Blok szablonu należący do klauzuli <code><strong>{% <i>else</i> %}</strong></code> w ciele pętli zostanie użyty gdy nie zajdzie żadna iteracja.
+  </li>
+  
+  <li>Dostępny jest zestaw zmiennych pomocniczych <i>loop</i>. Ich zasięg ogranicza się do wnętrza pętli w której się znajdują. Użycie w pętli wewnętrznej (pętle zagnieżdżone) odnosząc się na zewnątrz niej, wymaga przypisania <i>loop</i> do zmiennej przed pętlą wewnętrzną (<code><strong>{% set <i>zmienna</i> = loop %}</strong></code>).
+  </li>
+
+  <li>
+    Obiekt <code><strong>cycler</strong></code> służy do przechodzenia kolejno po zadanych elementach. Jego metody i atrybuty: <code><strong>current</strong></code> (aktualny element), <code><strong>next()</strong></code> (przejdź dalej i zwróć element) oraz <code><strong>reset()</strong></code> (zresetuj do początku).
+  </li>
+</ul> 
+</p>
+
+    
+
+		<!--/TRESC-->
+		</div>
+		</div>
+		
+<div id="STOPKA"><!--STOPKA-->&copy; dataheaven<!--/STOPKA--> Projekt strony na podstawie <a href="http://www.kurshtml.edu.pl">Kurs HTML</a>, dzięks! </div>
+	</div>
+</div>
+</body>
+</html>
